@@ -5,7 +5,7 @@ Reuben Brewer, Ph.D.
 reuben.brewer@gmail.com
 www.reubotics.com
 
-Software Revision A, 10/27/2024
+Software Revision B, 12/09/2025
 
 Verified working on: Python 3.12 for Windows 11 64-bit and Raspberry Pi Buster (may work on Mac in non-GUI mode, but haven't tested yet).
 '''
@@ -406,9 +406,10 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
         #########################################################
         if "SerialRxBufferSize" in setup_dict:
             self.SerialRxBufferSize = round(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("SerialRxBufferSize", setup_dict["SerialRxBufferSize"], 0.0, 4096.0)) #Maybe 64 to 4096
+            #Whether and how setting the Rx buffer size actually affects the reading behavior is complicated. This call only works in Windows. It seems to work for many drivers (including FTDI) but not all. Also, Windows doesn't allow a 0 or 1 byte buffer for all drivers.
 
         else:
-            self.SerialRxBufferSize = 64
+            self.SerialRxBufferSize = 0 #0 defaults to resetting the input buffer before each read
 
         print("SerialJSONstreamer_ReubenPython3Class: SerialRxBufferSize: " + str(self.SerialRxBufferSize))
         #########################################################
@@ -1175,6 +1176,9 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
                 ##########################################################################################################
                 ##########################################################################################################
+                if self.SerialRxBufferSize == 0:
+                    self.SerialObject.reset_input_buffer() #must be performed BEFORE reading. #12/09/2024, 04:49pm
+
                 if self.UseCRC16flag == 0:
                     RxMessage_Bytes_Raw = self.SerialObject.read_until(b'}\r\n')
                 else:

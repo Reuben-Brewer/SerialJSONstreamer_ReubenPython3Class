@@ -6,7 +6,7 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision A, 10/27/2024
+Software Revision B, 12/09/2025
 
 Verified working on: Python 3.12 for Windows 11 64-bit and Raspberry Pi Buster (may work on Mac in non-GUI mode, but haven't tested yet).
 '''
@@ -595,6 +595,15 @@ if __name__ == '__main__':
 
     global SerialJSONstreamer_MostRecentDict_DebugVar
     SerialJSONstreamer_MostRecentDict_DebugVar = 0.0
+    
+    global SerialJSONstreamer_MostRecentDict_x
+    SerialJSONstreamer_MostRecentDict_x = 0.0
+    
+    global SerialJSONstreamer_MostRecentDict_y
+    SerialJSONstreamer_MostRecentDict_y = 0.0
+    
+    global SerialJSONstreamer_MostRecentDict_z
+    SerialJSONstreamer_MostRecentDict_z = 0.0
     #################################################
     #################################################
 
@@ -735,14 +744,14 @@ if __name__ == '__main__':
     '''
     global SerialJSONstreamer_setup_dict
     SerialJSONstreamer_setup_dict = dict([("GUIparametersDict", SerialJSONstreamer_GUIparametersDict),
-                                                                                ("DesiredSerialNumber_USBtoSerialConverter", "FT1NH5RKA"), #"FT1NH5RKA" "16369920"
+                                                                                ("DesiredSerialNumber_USBtoSerialConverter", "000591157589"), #"FT1NH5RKA" "16369920"
                                                                                 ("FTDIchipUsedWithinUSBtoSerialConverterFlag", 1),
-                                                                                ("SerialBaudRate", 2000000), #2000000 for Teensy 4.1 HardwareSerial2
+                                                                                ("SerialBaudRate", 1000000), #2000000 for Teensy 4.1 HardwareSerial2
                                                                                 ("NameToDisplay_UserSet", "SerialJSONstreamer"),
                                                                                 ("DedicatedRxThread_TimeToSleepEachLoop", 0.001),
                                                                                 ("DedicatedTxThread_TimeToSleepEachLoop", 0.010),
-                                                                                ("SerialRxBufferSize", 43),
-                                                                                ("SerialTxBufferSize", 64),
+                                                                                ("SerialRxBufferSize", 40),
+                                                                                ("SerialTxBufferSize", 150),
                                                                                 ("DedicatedTxThread_TxMessageToSend_Queue_MaxSize", 1),
                                                                                 ("UseCRC16flag", 0)])
     #################################################
@@ -910,10 +919,10 @@ if __name__ == '__main__':
     #################################################
     #################################################
     global MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_NameList
-    MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_NameList = ["DebugVar_Raw", "DebugVar_Filtered", "Channel2", "Channel3", "Channel4", "Channel5"]
+    MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_NameList = ["x", "y", "z"]
 
     global MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_ColorList
-    MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_ColorList = ["Red", "Green", "Blue", "Black", "Purple", "Orange"]
+    MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_ColorList = ["Red", "Green", "Blue"]
 
     global MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_GUIparametersDict
     MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_GUIparametersDict = dict([("EnableInternal_MyPrint_Flag", 1),
@@ -1069,8 +1078,18 @@ if __name__ == '__main__':
 
             ###################################################
             if "RxMessage_Dict" in SerialJSONstreamer_MostRecentDict:
+                
                 if "DebugVar" in SerialJSONstreamer_MostRecentDict["RxMessage_Dict"]:
                     SerialJSONstreamer_MostRecentDict_DebugVar = SerialJSONstreamer_MostRecentDict["RxMessage_Dict"]["DebugVar"]
+                    
+                if "x" in SerialJSONstreamer_MostRecentDict["RxMessage_Dict"]:
+                    SerialJSONstreamer_MostRecentDict_x = SerialJSONstreamer_MostRecentDict["RxMessage_Dict"]["x"]
+                    
+                if "y" in SerialJSONstreamer_MostRecentDict["RxMessage_Dict"]:
+                    SerialJSONstreamer_MostRecentDict_y = SerialJSONstreamer_MostRecentDict["RxMessage_Dict"]["y"]
+                    
+                if "z" in SerialJSONstreamer_MostRecentDict["RxMessage_Dict"]:
+                    SerialJSONstreamer_MostRecentDict_z = SerialJSONstreamer_MostRecentDict["RxMessage_Dict"]["z"]
             ###################################################
 
         ###################################################
@@ -1177,9 +1196,9 @@ if __name__ == '__main__':
                     if MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_MostRecentDict_StandAlonePlottingProcess_ReadyForWritingFlag == 1:
                         if CurrentTime_MainLoopThread - LastTime_MainLoopThread_MyPlotterPureTkinterStandAloneProcess >= 0.030:
 
-                            MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject.ExternalAddPointOrListOfPointsToPlot(["DebugVar_Raw", "DebugVar_Filtered"],
-                                                                                                                                    [CurrentTime_MainLoopThread]*2,
-                                                                                                                                    [DebugVar_Raw, DebugVar_Filtered])
+                            MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject.ExternalAddPointOrListOfPointsToPlot(["x", "y", "z"],
+                                                                                                                                    [CurrentTime_MainLoopThread]*3,
+                                                                                                                                    [SerialJSONstreamer_MostRecentDict_x, SerialJSONstreamer_MostRecentDict_y, SerialJSONstreamer_MostRecentDict_z])
 
 
                             LastTime_MainLoopThread_MyPlotterPureTkinterStandAloneProcess = CurrentTime_MainLoopThread
@@ -1188,7 +1207,7 @@ if __name__ == '__main__':
             except:
                 exceptions = sys.exc_info()[0]
                 print("test_program_for_SerialJSONstreamer_ReubenPython3Class, if MyPlotterPureTkinterStandAloneProcess_OPEN_FLAG == 1: SET's, Exceptions: %s" % exceptions)
-                # traceback.print_exc()
+                traceback.print_exc()
         ####################################################
         ####################################################
 
