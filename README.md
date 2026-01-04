@@ -12,15 +12,15 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision B, 12/09/2025
+Software Revision C, 12/26/2025
 
 Verified working on:
 
-Python 3.12
+Python 3.12/13
 
 Windows 11 64-bit
 
-Raspberry Pi Buster
+Raspberry Pi Bookworm
 
 (may work on Mac in non-GUI mode, but haven't tested yet)
 
@@ -42,17 +42,21 @@ Example:
 
 ############
 
-SerialJSONstreamer_ReubenPython3Class, ListOfModuleDependencies: ['ftd2xx', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'serial', 'serial.tools']
+SerialJSONstreamer_ReubenPython3Class, ListOfModuleDependencies: ['ftd2xx', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'ReubenGithubCodeModulePaths', 'serial', 'serial.tools']
 
-SerialJSONstreamer_ReubenPython3Class, ListOfModuleDependencies_TestProgram: ['CSVdataLogger_ReubenPython3Class', 'EntryListWithBlinking_ReubenPython2and3Class', 'keyboard', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class']
+SerialJSONstreamer_ReubenPython3Class, ListOfModuleDependencies_TestProgram: ['CSVdataLogger_ReubenPython3Class', 'EntryListWithBlinking_ReubenPython2and3Class', 'keyboard', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'ReubenGithubCodeModulePaths']
 
-SerialJSONstreamer_ReubenPython3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins', 'LowPassFilter_ReubenPython2and3Class', 'numpy', 'pexpect', 'psutil']
+SerialJSONstreamer_ReubenPython3Class, ListOfModuleDependencies_NestedLayers: ['EntryListWithBlinking_ReubenPython2and3Class', 'GetCPUandMemoryUsageOfProcessByPID_ReubenPython3Class', 'numpy', 'pexpect', 'psutil', 'pyautogui', 'ReubenGithubCodeModulePaths']
 
-SerialJSONstreamer_ReubenPython3Class, ListOfModuleDependencies_All:['CSVdataLogger_ReubenPython3Class', 'EntryListWithBlinking_ReubenPython2and3Class', 'ftd2xx', 'future.builtins', 'keyboard', 'LowPassFilter_ReubenPython2and3Class', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'pexpect', 'psutil', 'serial', 'serial.tools']
+SerialJSONstreamer_ReubenPython3Class, ListOfModuleDependencies_All:['CSVdataLogger_ReubenPython3Class', 'EntryListWithBlinking_ReubenPython2and3Class', 'ftd2xx', 'GetCPUandMemoryUsageOfProcessByPID_ReubenPython3Class', 'keyboard', 'LowPassFilterForDictsOfLists_ReubenPython2and3Class', 'MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class', 'MyPrint_ReubenPython2and3Class', 'numpy', 'pexpect', 'psutil', 'pyautogui', 'ReubenGithubCodeModulePaths', 'serial', 'serial.tools']
 
 pip install psutil
 
 pip install pyserial (NOT pip install serial).
+
+pip install ftd2xx
+
+Unzip FTDI_ D2XX_drivers__CDM2123620_Setup.zip, run the EXE, and then manually copy ftd2xx64.dll --> C:\Anaconda3\
 
 ############
 
@@ -66,13 +70,13 @@ ExcelPlot_CSVdataLogger_ReubenPython3Code_SerialJSONstreamer.py, ListOfModuleDep
 
 ExcelPlot_CSVdataLogger_ReubenPython3Code_SerialJSONstreamer.py, ListOfModuleDependencies_All:['pandas', 'win32com.client', 'xlsxwriter', 'xlutils.copy', 'xlwt']
 
-pip install pywin32         #version 305.1 as of 10/17/24
+pip install pywin32=311
 
-pip install xlsxwriter      #version 3.2.0 as of 10/17/24. Might have to manually delete older version from /lib/site-packages if it was distutils-managed. Works overall, but the function ".set_size" doesn't do anything.
+pip install xlsxwriter==3.2.9 #Might have to manually delete older version from /lib/site-packages if it was distutils-managed. Works overall, but the function ".set_size" doesn't do anything.
 
-pip install xlutils         #version 2.0.0 as of 10/17/24
+pip install xlutils==2.0.0
 
-pip install xlwt            #version 1.3.0 as of 10/17/24
+pip install xlwt==1.3.0
 
 ############
 
