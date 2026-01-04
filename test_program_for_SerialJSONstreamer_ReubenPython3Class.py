@@ -5,13 +5,20 @@ Reuben Brewer, Ph.D.
 reuben.brewer@gmail.com
 www.reubotics.com
 
-Apache 2 License
-Software Revision B, 12/09/2025
+Software Revision C, 12/26/2025
 
-Verified working on: Python 3.12 for Windows 11 64-bit and Raspberry Pi Buster (may work on Mac in non-GUI mode, but haven't tested yet).
+Verified working on: Python 3.12/13 for Windows 11 64-bit and Raspberry Pi Bookworm (may work on Mac in non-GUI mode, but haven't tested yet).
 '''
 
 __author__ = 'reuben.brewer'
+
+#######################################################################################################################
+#######################################################################################################################
+
+##########################################
+import ReubenGithubCodeModulePaths #Replaces the need to have "ReubenGithubCodeModulePaths.pth" within "C:\Anaconda3\Lib\site-packages".
+ReubenGithubCodeModulePaths.Enable()
+##########################################
 
 ##########################################
 from CSVdataLogger_ReubenPython3Class import *
@@ -47,14 +54,17 @@ if platform.system() == "Windows":
     winmm.timeBeginPeriod(1) #Set minimum timer resolution to 1ms so that time.sleep(0.001) behaves properly.
 ##########################################
 
-###########################################################################################################
-##########################################################################################################
+#######################################################################################################################
+#######################################################################################################################
+
+#######################################################################################################################
+#######################################################################################################################
 def getPreciseSecondsTimeStampString():
     ts = time.time()
 
     return ts
-##########################################################################################################
-##########################################################################################################
+#######################################################################################################################
+#######################################################################################################################
 
 #######################################################################################################################
 #######################################################################################################################
@@ -262,14 +272,14 @@ def GUI_update_clock():
     global SerialJSONstreamer_MostRecentDict
     global SerialJSONstreamer_MostRecentDict_Label
 
-    global EntryListWithBlinking_ReubenPython2and3ClassObject
+    global EntryListWithBlinking_Object
     global EntryListWithBlinking_OPEN_FLAG
 
-    global CSVdataLogger_ReubenPython3ClassObject
+    global CSVdataLogger_Object
     global CSVdataLogger_OPEN_FLAG
     global SHOW_IN_GUI_CSVdataLogger_FLAG
 
-    global MyPrint_ReubenPython2and3ClassObject
+    global MyPrint_Object
     global MyPrint_OPEN_FLAG
     global SHOW_IN_GUI_MyPrint_FLAG
 
@@ -292,17 +302,17 @@ def GUI_update_clock():
 
             #########################################################
             if EntryListWithBlinking_OPEN_FLAG == 1:
-                EntryListWithBlinking_ReubenPython2and3ClassObject.GUI_update_clock()
+                EntryListWithBlinking_Object.GUI_update_clock()
             #########################################################
 
             #########################################################
             if CSVdataLogger_OPEN_FLAG == 1 and SHOW_IN_GUI_CSVdataLogger_FLAG == 1:
-                CSVdataLogger_ReubenPython3ClassObject.GUI_update_clock()
+                CSVdataLogger_Object.GUI_update_clock()
             #########################################################
 
             #########################################################
             if MyPrint_OPEN_FLAG == 1 and SHOW_IN_GUI_MyPrint_FLAG == 1:
-                MyPrint_ReubenPython2and3ClassObject.GUI_update_clock()
+                MyPrint_Object.GUI_update_clock()
             #########################################################
 
             root.after(GUI_RootAfterCallbackInterval_Milliseconds, GUI_update_clock)
@@ -316,17 +326,19 @@ def GUI_update_clock():
 ##########################################################################################################
 def ExitProgram_Callback(OptionalArugment = 0):
     global EXIT_PROGRAM_FLAG
-    global CSVdataLogger_ReubenPython3ClassObject_IsSavingFlag
+    global CSVdataLogger_IsSavingFlag
 
     print("ExitProgram_Callback event fired!")
 
-    if CSVdataLogger_ReubenPython3ClassObject_IsSavingFlag == 0:
+    if CSVdataLogger_IsSavingFlag == 0:
         EXIT_PROGRAM_FLAG = 1
     else:
         print("ExitProgram_Callback, ERROR! Still saving data.")
 ##########################################################################################################
 ##########################################################################################################
 
+##########################################################################################################
+##########################################################################################################
 ##########################################################################################################
 ##########################################################################################################
 def GUI_Thread():
@@ -338,9 +350,25 @@ def GUI_Thread():
     global GUI_RootAfterCallbackInterval_Milliseconds
     global USE_TABS_IN_GUI_FLAG
 
+    global SerialJSONstreamer_Object
+    global SerialJSONstreamer_OPEN_FLAG
+
+    global EntryListWithBlinking_Object
+    global EntryListWithBlinking_OPEN_FLAG
+
+    global CSVdataLogger_Object
+    global CSVdataLogger_OPEN_FLAG
+
+    global MyPrint_Object
+    global MyPrint_OPEN_FLAG
+
     ################################################# KEY GUI LINE
     #################################################
     root = Tk()
+
+    root.protocol("WM_DELETE_WINDOW", ExitProgram_Callback)  # Set the callback function for when the window's closed.
+    root.title("test_program_for_SerialJSONstreamer_ReubenPython3Class")
+    root.geometry('%dx%d+%d+%d' % (root_width, root_height, root_Xpos, root_Ypos)) # set the dimensions of the screen and where it is placed
     #################################################
     #################################################
 
@@ -401,24 +429,47 @@ def GUI_Thread():
     #################################################
     #################################################
 
-    ##########################################################################################################
+    #########################################################
+    if SerialJSONstreamer_OPEN_FLAG == 1:
+        SerialJSONstreamer_Object.CreateGUIobjects(TkinterParent=Tab_SerialJSONstreamer)
+    #########################################################
+
+    #########################################################
+    if EntryListWithBlinking_OPEN_FLAG == 1:
+        EntryListWithBlinking_Object.CreateGUIobjects(TkinterParent=Tab_MainControls)
+    #########################################################
+
+    #########################################################
+    if CSVdataLogger_OPEN_FLAG == 1:
+        CSVdataLogger_Object.CreateGUIobjects(TkinterParent=Tab_CSVdataLogger)
+    #########################################################
+
+    #########################################################
+    if MyPrint_OPEN_FLAG == 1:
+        MyPrint_Object.CreateGUIobjects(TkinterParent=Tab_MyPrint)
+    #########################################################
 
     ################################################# THIS BLOCK MUST COME 2ND-TO-LAST IN def GUI_Thread() IF USING TABS.
-    root.protocol("WM_DELETE_WINDOW", ExitProgram_Callback)  # Set the callback function for when the window's closed.
-    root.title("test_program_for_SerialJSONstreamer_ReubenPython3Class")
-    root.geometry('%dx%d+%d+%d' % (root_width, root_height, root_Xpos, root_Ypos)) # set the dimensions of the screen and where it is placed
+    #################################################
     root.after(GUI_RootAfterCallbackInterval_Milliseconds, GUI_update_clock)
     root.mainloop()
     #################################################
+    #################################################
 
-    #################################################  THIS BLOCK MUST COME LAST IN def GUI_Thread() REGARDLESS OF CODE.
+    ################################################# THIS BLOCK MUST COME LAST IN def GUI_Thread() REGARDLESS OF CODE.
+    #################################################
     root.quit() #Stop the GUI thread, MUST BE CALLED FROM GUI_Thread
     root.destroy() #Close down the GUI thread, MUST BE CALLED FROM GUI_Thread
+    #################################################
     #################################################
 
 ##########################################################################################################
 ##########################################################################################################
+##########################################################################################################
+##########################################################################################################
 
+##########################################################################################################
+##########################################################################################################
 ##########################################################################################################
 ##########################################################################################################
 if __name__ == '__main__':
@@ -609,7 +660,7 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    global MyPrint_ReubenPython2and3ClassObject
+    global MyPrint_Object
 
     global MyPrint_OPEN_FLAG
     MyPrint_OPEN_FLAG = -1
@@ -618,7 +669,7 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    global CSVdataLogger_ReubenPython3ClassObject
+    global CSVdataLogger_Object
 
     global CSVdataLogger_OPEN_FLAG
     CSVdataLogger_OPEN_FLAG = -1
@@ -629,23 +680,23 @@ if __name__ == '__main__':
     global CSVdataLogger_MostRecentDict_Time
     CSVdataLogger_MostRecentDict_Time = -11111.0
 
-    global CSVdataLogger_ReubenPython3ClassObject_HeaderWrittenYetFlag
-    CSVdataLogger_ReubenPython3ClassObject_HeaderWrittenYetFlag = 0
+    global CSVdataLogger_HeaderWrittenYetFlag
+    CSVdataLogger_HeaderWrittenYetFlag = 0
 
-    global CSVdataLogger_ReubenPython3ClassObject_IsSavingFlag
-    CSVdataLogger_ReubenPython3ClassObject_IsSavingFlag = 0
+    global CSVdataLogger_IsSavingFlag
+    CSVdataLogger_IsSavingFlag = 0
     #################################################
     #################################################
 
     ####################################################
     ####################################################
-    global LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject
+    global LowPassFilterForDictsOfLists_Object
 
-    global LowPassFilterForDictsOfLists_Keyboard_OPEN_FLAG
-    LowPassFilterForDictsOfLists_Keyboard_OPEN_FLAG = -1
+    global LowPassFilterForDictsOfLists_OPEN_FLAG
+    LowPassFilterForDictsOfLists_OPEN_FLAG = -1
 
-    global LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_MostRecentDict
-    LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_MostRecentDict = dict()
+    global LowPassFilterForDictsOfLists_MostRecentDict
+    LowPassFilterForDictsOfLists_MostRecentDict = dict()
 
     global DebugVar_Raw
     DebugVar_Raw = 0.0
@@ -660,7 +711,7 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    global EntryListWithBlinking_ReubenPython2and3ClassObject
+    global EntryListWithBlinking_Object
 
     global EntryListWithBlinking_OPEN_FLAG
     EntryListWithBlinking_OPEN_FLAG = -1
@@ -698,68 +749,45 @@ if __name__ == '__main__':
     #################################################
     #################################################
 
-    #################################################  KEY GUI LINE
-    #################################################
-    if USE_GUI_FLAG == 1:
-        print("Starting GUI thread...")
-        GUI_Thread_ThreadingObject = threading.Thread(target=GUI_Thread)
-        GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
-        GUI_Thread_ThreadingObject.start()
-        time.sleep(0.5)  #Allow enough time for 'root' to be created that we can then pass it into other classes.
-    else:
-        root = None
-        Tab_MainControls = None
-        Tab_SerialJSONstreamer = None
-        Tab_MyPrint = None
-    #################################################
-    #################################################
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
 
     #################################################
-    #################################################
-    #################################################
-
-    #################################################
-    #################################################
-
     #################################################
     global SerialJSONstreamer_GUIparametersDict
     SerialJSONstreamer_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_SerialJSONstreamer_FLAG),
-                                    ("root", Tab_SerialJSONstreamer),
-                                    ("EnableInternal_MyPrint_Flag", 0),
-                                    ("NumberOfPrintLines", 10),
-                                    ("UseBorderAroundThisGuiObjectFlag", 0),
-                                    ("GUI_ROW", GUI_ROW_SerialJSONstreamer),
-                                    ("GUI_COLUMN", GUI_COLUMN_SerialJSONstreamer),
-                                    ("GUI_PADX", GUI_PADX_SerialJSONstreamer),
-                                    ("GUI_PADY", GUI_PADY_SerialJSONstreamer),
-                                    ("GUI_ROWSPAN", GUI_ROWSPAN_SerialJSONstreamer),
-                                    ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_SerialJSONstreamer)])
-    #################################################
+                                                ("EnableInternal_MyPrint_Flag", 0),
+                                                ("NumberOfPrintLines", 10),
+                                                ("UseBorderAroundThisGuiObjectFlag", 0),
+                                                ("GUI_ROW", GUI_ROW_SerialJSONstreamer),
+                                                ("GUI_COLUMN", GUI_COLUMN_SerialJSONstreamer),
+                                                ("GUI_PADX", GUI_PADX_SerialJSONstreamer),
+                                                ("GUI_PADY", GUI_PADY_SerialJSONstreamer),
+                                                ("GUI_ROWSPAN", GUI_ROWSPAN_SerialJSONstreamer),
+                                                ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_SerialJSONstreamer)])
 
-    #################################################
     '''
     "USB\\VID_16C0&PID_0483&MI_00\\6&359E807C&0&0000", SN = "16369920": Example 1 of Teensy 4.1's main USB-micro-serial-debugging-port.
     "USB\\VID_16C0&PID_0483&MI_00\\6&33A34BF8&0&0000", SN = "16366690": Example 2 of Teensy 4.1's main USB-micro-serial-debugging-port.
     "USB\\VID_16C0&PID_0483\\5814960", SN = "5814960": Example 1 of Teensy 3.2's main USB-micro-serial-debugging-port.
     '''
-    global SerialJSONstreamer_setup_dict
-    SerialJSONstreamer_setup_dict = dict([("GUIparametersDict", SerialJSONstreamer_GUIparametersDict),
-                                                                                ("DesiredSerialNumber_USBtoSerialConverter", "000591157589"), #"FT1NH5RKA" "16369920"
-                                                                                ("FTDIchipUsedWithinUSBtoSerialConverterFlag", 1),
-                                                                                ("SerialBaudRate", 1000000), #2000000 for Teensy 4.1 HardwareSerial2
-                                                                                ("NameToDisplay_UserSet", "SerialJSONstreamer"),
-                                                                                ("DedicatedRxThread_TimeToSleepEachLoop", 0.001),
-                                                                                ("DedicatedTxThread_TimeToSleepEachLoop", 0.010),
-                                                                                ("SerialRxBufferSize", 40),
-                                                                                ("SerialTxBufferSize", 150),
-                                                                                ("DedicatedTxThread_TxMessageToSend_Queue_MaxSize", 1),
-                                                                                ("UseCRC16flag", 0)])
-    #################################################
+    global SerialJSONstreamer_SetupDict
+    SerialJSONstreamer_SetupDict = dict([("GUIparametersDict", SerialJSONstreamer_GUIparametersDict),
+                                        ("DesiredSerialNumber_USBtoSerialConverter", "000591157589"), #"FT1NH5RKA" "16369920"
+                                        ("FTDIchipUsedWithinUSBtoSerialConverterFlag", 1),
+                                        ("SerialBaudRate", 1000000), #2000000 for Teensy 4.1 HardwareSerial2
+                                        ("NameToDisplay_UserSet", "SerialJSONstreamer"),
+                                        ("DedicatedRxThread_TimeToSleepEachLoop", 0.001),
+                                        ("DedicatedTxThread_TimeToSleepEachLoop", 0.010),
+                                        ("SerialRxBufferSize", 40),
+                                        ("SerialTxBufferSize", 150),
+                                        ("DedicatedTxThread_TxMessageToSend_Queue_MaxSize", 1),
+                                        ("UseCRC16flag", 0)])
 
-    #################################################
     if USE_SerialJSONstreamer_FLAG == 1:
         try:
-            SerialJSONstreamer_Object = SerialJSONstreamer_ReubenPython3Class(SerialJSONstreamer_setup_dict)
+            SerialJSONstreamer_Object = SerialJSONstreamer_ReubenPython3Class(SerialJSONstreamer_SetupDict)
             SerialJSONstreamer_OPEN_FLAG = SerialJSONstreamer_Object.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
@@ -767,77 +795,103 @@ if __name__ == '__main__':
             print("SerialJSONstreamer_ReubenPython3ClassObject __init__, exceptions: %s" % exceptions)
             traceback.print_exc()
     #################################################
-
-    #################################################
     #################################################
 
     #################################################
     #################################################
+    if USE_SerialJSONstreamer_FLAG == 1:
+        if EXIT_PROGRAM_FLAG == 0:
+            if SerialJSONstreamer_OPEN_FLAG != 1:
+                print("Failed to open SerialJSONstreamer_ReubenPython3Class.")
+                ExitProgram_Callback()
+    #################################################
+    #################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+
+    #################################################
+    #################################################
+    global CSVdataLogger_GUIparametersDict
+    CSVdataLogger_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_CSVdataLogger_FLAG),
+                                            ("EnableInternal_MyPrint_Flag", 1),
+                                            ("NumberOfPrintLines", 10),
+                                            ("UseBorderAroundThisGuiObjectFlag", 0),
+                                            ("GUI_ROW", GUI_ROW_CSVdataLogger),
+                                            ("GUI_COLUMN", GUI_COLUMN_CSVdataLogger),
+                                            ("GUI_PADX", GUI_PADX_CSVdataLogger),
+                                            ("GUI_PADY", GUI_PADY_CSVdataLogger),
+                                            ("GUI_ROWSPAN", GUI_ROWSPAN_CSVdataLogger),
+                                            ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_CSVdataLogger)])
+    #################################################
+    #################################################
+
+    #################################################
+    CSVdataLogger_SetupDict_VariableNamesForHeaderList = []
+    #################################################
+
+    #################################################
+    print("CSVdataLogger_SetupDict_VariableNamesForHeaderList: " + str(CSVdataLogger_SetupDict_VariableNamesForHeaderList))
     #################################################
 
     #################################################
     #################################################
-    #################################################
-    global CSVdataLogger_ReubenPython3ClassObject_GUIparametersDict
-    CSVdataLogger_ReubenPython3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_CSVdataLogger_FLAG),
-                                    ("root", Tab_MainControls), #Tab_CSVdataLogger
-                                    ("EnableInternal_MyPrint_Flag", 1),
-                                    ("NumberOfPrintLines", 10),
-                                    ("UseBorderAroundThisGuiObjectFlag", 0),
-                                    ("GUI_ROW", GUI_ROW_CSVdataLogger),
-                                    ("GUI_COLUMN", GUI_COLUMN_CSVdataLogger),
-                                    ("GUI_PADX", GUI_PADX_CSVdataLogger),
-                                    ("GUI_PADY", GUI_PADY_CSVdataLogger),
-                                    ("GUI_ROWSPAN", GUI_ROWSPAN_CSVdataLogger),
-                                    ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_CSVdataLogger)])
-
-    #################################################
-    #################################################
-
-    #################################################
-    CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList = []
-    #################################################
-
-    #################################################
-    print("CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList: " + str(CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList))
-    #################################################
-
-    #################################################
-    #################################################
-    global CSVdataLogger_ReubenPython3ClassObject_setup_dict
-    CSVdataLogger_ReubenPython3ClassObject_setup_dict = dict([("GUIparametersDict", CSVdataLogger_ReubenPython3ClassObject_GUIparametersDict),
-                                                                                ("NameToDisplay_UserSet", "CSVdataLogger"),
-                                                                                ("CSVfile_DirectoryPath", "C:\\CSVfiles"),
-                                                                                ("FileNamePrefix", "CSV_file_"),
-                                                                                ("VariableNamesForHeaderList", CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList),
-                                                                                ("MainThread_TimeToSleepEachLoop", 0.002),
-                                                                                ("SaveOnStartupFlag", 0)])
+    global CSVdataLogger_SetupDict
+    CSVdataLogger_SetupDict = dict([("GUIparametersDict", CSVdataLogger_GUIparametersDict),
+                                    ("NameToDisplay_UserSet", "CSVdataLogger"),
+                                    ("CSVfile_DirectoryPath", "C:\\CSVfiles"),
+                                    ("FileNamePrefix", "CSV_file_"),
+                                    ("VariableNamesForHeaderList", CSVdataLogger_SetupDict_VariableNamesForHeaderList),
+                                    ("MainThread_TimeToSleepEachLoop", 0.002),
+                                    ("SaveOnStartupFlag", 0)])
 
     if USE_CSVdataLogger_FLAG == 1:
         try:
-            CSVdataLogger_ReubenPython3ClassObject = CSVdataLogger_ReubenPython3Class(CSVdataLogger_ReubenPython3ClassObject_setup_dict)
-            CSVdataLogger_OPEN_FLAG = CSVdataLogger_ReubenPython3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+            CSVdataLogger_Object = CSVdataLogger_ReubenPython3Class(CSVdataLogger_SetupDict)
+            CSVdataLogger_OPEN_FLAG = CSVdataLogger_Object.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
             exceptions = sys.exc_info()[0]
-            print("CSVdataLogger_ReubenPython3ClassObject __init__: Exceptions: %s" % exceptions)
+            print("CSVdataLogger_Object __init__: Exceptions: %s" % exceptions)
             traceback.print_exc()
     #################################################
     #################################################
+
     #################################################
+    #################################################
+    if USE_CSVdataLogger_FLAG == 1:
+        if EXIT_PROGRAM_FLAG == 0:
+            if CSVdataLogger_OPEN_FLAG != 1:
+                print("Failed to open CSVdataLogger_Object.")
+                ExitProgram_Callback()
+    #################################################
+    #################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
 
     ####################################################
     ####################################################
     try:
         global LowPassFilterForDictsOfLists_DictOfVariableFilterSettings
-        LowPassFilterForDictsOfLists_DictOfVariableFilterSettings = dict([("DebugVar", dict([("UseMedianFilterFlag", 1),
-                                                              ("UseExponentialSmoothingFilterFlag", 1),
-                                                              ("ExponentialSmoothingFilterLambda", DebugVar_LowPassFilterForDictsOfLists_ExponentialSmoothingFilterLambda)]))]) #new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
+        LowPassFilterForDictsOfLists_DictOfVariableFilterSettings = dict([("DebugVar", dict([("UseMedianFilterFlag", 0),
+                                                                          ("UseExponentialSmoothingFilterFlag", 1),
+                                                                          ("ExponentialSmoothingFilterLambda", DebugVar_LowPassFilterForDictsOfLists_ExponentialSmoothingFilterLambda)]))]) #new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
 
-        LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_setup_dict = dict([("DictOfVariableFilterSettings", LowPassFilterForDictsOfLists_DictOfVariableFilterSettings)])
+        LowPassFilterForDictsOfLists_SetupDict = dict([("DictOfVariableFilterSettings", LowPassFilterForDictsOfLists_DictOfVariableFilterSettings)])
 
-        LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject = LowPassFilterForDictsOfLists_ReubenPython2and3Class(LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_setup_dict)
-        LowPassFilterForDictsOfLists_Keyboard_OPEN_FLAG = LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+        LowPassFilterForDictsOfLists_Object = LowPassFilterForDictsOfLists_ReubenPython2and3Class(LowPassFilterForDictsOfLists_SetupDict)
+        LowPassFilterForDictsOfLists_OPEN_FLAG = LowPassFilterForDictsOfLists_Object.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
     except:
         exceptions = sys.exc_info()[0]
@@ -847,15 +901,31 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    global EntryListWithBlinking_ReubenPython2and3ClassObject_GUIparametersDict
-    EntryListWithBlinking_ReubenPython2and3ClassObject_GUIparametersDict = dict([("root", Tab_MainControls),
-                                    ("UseBorderAroundThisGuiObjectFlag", 0),
-                                    ("GUI_ROW", GUI_ROW_EntryListWithBlinking),
-                                    ("GUI_COLUMN", GUI_COLUMN_EntryListWithBlinking),
-                                    ("GUI_PADX", GUI_PADX_EntryListWithBlinking),
-                                    ("GUI_PADY", GUI_PADY_EntryListWithBlinking),
-                                    ("GUI_ROWSPAN", GUI_ROWSPAN_EntryListWithBlinking),
-                                    ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_EntryListWithBlinking)])
+    if EXIT_PROGRAM_FLAG == 0:
+        if LowPassFilterForDictsOfLists_OPEN_FLAG != 1:
+            print("Failed to open LowPassFilterForDictsOfLists_Object.")
+            ExitProgram_Callback()
+    #################################################
+    #################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+
+    #################################################
+    #################################################
+    global EntryListWithBlinking_GUIparametersDict
+    EntryListWithBlinking_GUIparametersDict = dict([("UseBorderAroundThisGuiObjectFlag", 0),
+                                                    ("GUI_ROW", GUI_ROW_EntryListWithBlinking),
+                                                    ("GUI_COLUMN", GUI_COLUMN_EntryListWithBlinking),
+                                                    ("GUI_PADX", GUI_PADX_EntryListWithBlinking),
+                                                    ("GUI_PADY", GUI_PADY_EntryListWithBlinking),
+                                                    ("GUI_ROWSPAN", GUI_ROWSPAN_EntryListWithBlinking),
+                                                    ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_EntryListWithBlinking)])
 
     global EntryListWithBlinking_Variables_ListOfDicts
     EntryListWithBlinking_Variables_ListOfDicts = [dict([("Name", "DebugVar_LowPassFilterForDictsOfLists_ExponentialSmoothingFilterLambda"),
@@ -868,19 +938,68 @@ if __name__ == '__main__':
                                                          ("LabelWidth", LabelWidth),
                                                          ("FontSize", FontSize)])]
 
-    global EntryListWithBlinking_ReubenPython2and3ClassObject_setup_dict
-    EntryListWithBlinking_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", EntryListWithBlinking_ReubenPython2and3ClassObject_GUIparametersDict),
-                                                                          ("EntryListWithBlinking_Variables_ListOfDicts", EntryListWithBlinking_Variables_ListOfDicts),
-                                                                          ("DebugByPrintingVariablesFlag", 0),
-                                                                          ("LoseFocusIfMouseLeavesEntryFlag", 0)])
+    global EntryListWithBlinking_SetupDict
+    EntryListWithBlinking_SetupDict = dict([("GUIparametersDict", EntryListWithBlinking_GUIparametersDict),
+                                              ("EntryListWithBlinking_Variables_ListOfDicts", EntryListWithBlinking_Variables_ListOfDicts),
+                                              ("DebugByPrintingVariablesFlag", 0),
+                                              ("LoseFocusIfMouseLeavesEntryFlag", 0)])
+
     if USE_EntryListWithBlinking_FLAG == 1:
         try:
-            EntryListWithBlinking_ReubenPython2and3ClassObject = EntryListWithBlinking_ReubenPython2and3Class(EntryListWithBlinking_ReubenPython2and3ClassObject_setup_dict)
-            EntryListWithBlinking_OPEN_FLAG = EntryListWithBlinking_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+            EntryListWithBlinking_Object = EntryListWithBlinking_ReubenPython2and3Class(EntryListWithBlinking_SetupDict)
+            EntryListWithBlinking_OPEN_FLAG = EntryListWithBlinking_Object.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
             exceptions = sys.exc_info()[0]
-            print("EntryListWithBlinking_ReubenPython2and3ClassObject __init__: Exceptions: %s" % exceptions, 0)
+            print("EntryListWithBlinking_Object __init__: Exceptions: %s" % exceptions, 0)
+            traceback.print_exc()
+    #################################################
+    #################################################
+
+    #################################################
+    #################################################
+    if USE_EntryListWithBlinking_FLAG == 1:
+        if EXIT_PROGRAM_FLAG == 0:
+            if EntryListWithBlinking_OPEN_FLAG != 1:
+                print("Failed to open EntryListWithBlinking_ReubenPython3Class.")
+                ExitProgram_Callback()
+    #################################################
+    #################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+
+    #################################################
+    #################################################
+    if USE_MyPrint_FLAG == 1:
+
+        MyPrint_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_MyPrint_FLAG),
+                                            ("UseBorderAroundThisGuiObjectFlag", 0),
+                                            ("GUI_ROW", GUI_ROW_MyPrint),
+                                            ("GUI_COLUMN", GUI_COLUMN_MyPrint),
+                                            ("GUI_PADX", GUI_PADX_MyPrint),
+                                            ("GUI_PADY", GUI_PADY_MyPrint),
+                                            ("GUI_ROWSPAN", GUI_ROWSPAN_MyPrint),
+                                            ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_MyPrint)])
+
+        MyPrint_SetupDict = dict([("NumberOfPrintLines", 10),
+                                ("WidthOfPrintingLabel", 200),
+                                ("PrintToConsoleFlag", 1),
+                                ("LogFileNameFullPath", os.path.join(os.getcwd(), "TestLog.txt")),
+                                ("GUIparametersDict", MyPrint_GUIparametersDict)])
+
+        try:
+            MyPrint_Object = MyPrint_ReubenPython2and3Class(MyPrint_SetupDict)
+            MyPrint_OPEN_FLAG = MyPrint_Object.OBJECT_CREATED_SUCCESSFULLY_FLAG
+
+        except:
+            exceptions = sys.exc_info()[0]
+            print("MyPrint_Object __init__: Exceptions: %s" % exceptions)
             traceback.print_exc()
     #################################################
     #################################################
@@ -888,33 +1007,20 @@ if __name__ == '__main__':
     #################################################
     #################################################
     if USE_MyPrint_FLAG == 1:
-
-        MyPrint_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_MyPrint_FLAG),
-                                                                        ("root", Tab_MyPrint),
-                                                                        ("UseBorderAroundThisGuiObjectFlag", 0),
-                                                                        ("GUI_ROW", GUI_ROW_MyPrint),
-                                                                        ("GUI_COLUMN", GUI_COLUMN_MyPrint),
-                                                                        ("GUI_PADX", GUI_PADX_MyPrint),
-                                                                        ("GUI_PADY", GUI_PADY_MyPrint),
-                                                                        ("GUI_ROWSPAN", GUI_ROWSPAN_MyPrint),
-                                                                        ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_MyPrint)])
-
-        MyPrint_ReubenPython2and3ClassObject_setup_dict = dict([("NumberOfPrintLines", 10),
-                                                                ("WidthOfPrintingLabel", 200),
-                                                                ("PrintToConsoleFlag", 1),
-                                                                ("LogFileNameFullPath", os.getcwd() + "//TestLog.txt"),
-                                                                ("GUIparametersDict", MyPrint_ReubenPython2and3ClassObject_GUIparametersDict)])
-
-        try:
-            MyPrint_ReubenPython2and3ClassObject = MyPrint_ReubenPython2and3Class(MyPrint_ReubenPython2and3ClassObject_setup_dict)
-            MyPrint_OPEN_FLAG = MyPrint_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
-
-        except:
-            exceptions = sys.exc_info()[0]
-            print("MyPrint_ReubenPython2and3ClassObject __init__: Exceptions: %s" % exceptions)
-            traceback.print_exc()
+        if EXIT_PROGRAM_FLAG == 0:
+            if MyPrint_OPEN_FLAG != 1:
+                print("Failed to open MyPrint_Object.")
+                ExitProgram_Callback()
     #################################################
     #################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
 
     #################################################
     #################################################
@@ -934,8 +1040,8 @@ if __name__ == '__main__':
                                                                                                 ("GraphCanvasWindowStartingY", 0),
                                                                                                 ("GUI_RootAfterCallbackInterval_Milliseconds_IndependentOfParentRootGUIloopEvents", 20)])
 
-    global MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_setup_dict
-    MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_GUIparametersDict),
+    global MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_SetupDict
+    MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_SetupDict = dict([("GUIparametersDict", MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_GUIparametersDict),
                                                                                         ("ParentPID", os.getpid()),
                                                                                         ("WatchdogTimerExpirationDurationSeconds_StandAlonePlottingProcess", 5.0),
                                                                                         ("MarkerSize", 3),
@@ -960,7 +1066,7 @@ if __name__ == '__main__':
 
     if USE_MyPlotterPureTkinterStandAloneProcess_FLAG == 1:
         try:
-            MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject = MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class(MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_setup_dict)
+            MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject = MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3Class(MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject_SetupDict)
             MyPlotterPureTkinterStandAloneProcess_OPEN_FLAG = MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
@@ -972,65 +1078,56 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
+    if USE_MyPlotterPureTkinterStandAloneProcess_FLAG == 1:
+        if EXIT_PROGRAM_FLAG == 0:
+            if MyPlotterPureTkinterStandAloneProcess_OPEN_FLAG != 1:
+                print("Failed to open MyPlotterPureTkinterStandAloneProcess_Object.")
+                ExitProgram_Callback()
+    #################################################
+    #################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
     if USE_Keyboard_FLAG == 1:
         keyboard.on_press_key("esc", ExitProgram_Callback)
-        keyboard.on_press_key("q", ExitProgram_Callback)
-    #################################################
-    #################################################
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
 
-    #################################################
-    #################################################
-    if USE_SerialJSONstreamer_FLAG == 1 and SerialJSONstreamer_OPEN_FLAG != 1:
-        print("Failed to open SerialJSONstreamer_ReubenPython3Class.")
-        #ExitProgram_Callback()
-    #################################################
-    #################################################
+    ##################################################################################################### KEY GUI LINE
+    #####################################################################################################
+    #####################################################################################################
+    if USE_GUI_FLAG == 1 and EXIT_PROGRAM_FLAG == 0:
+        print("Starting GUI thread...")
+        GUI_Thread_ThreadingObject = threading.Thread(target=GUI_Thread, daemon=True) #Daemon=True means that the GUI thread is destroyed automatically when the main thread is destroyed.
+        GUI_Thread_ThreadingObject.start()
+    else:
+        root = None
+        Tab_MainControls = None
+        Tab_SerialJSONstreamer = None
+        Tab_MyPrint = None
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
 
-    #################################################
-    #################################################
-    if USE_MyPrint_FLAG == 1 and MyPrint_OPEN_FLAG != 1:
-        print("Failed to open MyPrint_ReubenPython2and3ClassObject.")
-        #ExitProgram_Callback()
-    #################################################
-    #################################################
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
+    if EXIT_PROGRAM_FLAG == 0:
+        print("Starting main loop 'test_program_for_SerialJSONstreamer_ReubenPython3Class.")
+        StartingTime_MainLoopThread = getPreciseSecondsTimeStampString()
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
 
-    #################################################
-    #################################################
-    if USE_CSVdataLogger_FLAG == 1 and CSVdataLogger_OPEN_FLAG != 1:
-        print("Failed to open CSVdataLogger_ReubenPython3Class.")
-        #ExitProgram_Callback()
-    #################################################
-    #################################################
-
-    ####################################################
-    ####################################################
-    if LowPassFilterForDictsOfLists_Keyboard_OPEN_FLAG != 1:
-        print("Failed to open LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.")
-        #ExitProgram_Callback()
-    ####################################################
-    ####################################################
-
-    #################################################
-    #################################################
-    if USE_EntryListWithBlinking_FLAG == 1 and EntryListWithBlinking_OPEN_FLAG != 1:
-        print("Failed to open EntryListWithBlinking_ReubenPython2and3Class.")
-        #ExitProgram_Callback()
-    #################################################
-    #################################################
-
-    #################################################
-    #################################################
-    if USE_MyPlotterPureTkinterStandAloneProcess_FLAG == 1 and MyPlotterPureTkinterStandAloneProcess_OPEN_FLAG != 1:
-        print("Failed to open MyPlotterPureTkinterClass_Object.")
-        #ExitProgram_Callback()
-    #################################################
-    #################################################
-
-    #################################################
-    #################################################
-    print("Starting main loop 'test_program_for_SerialJSONstreamer_ReubenPython3Class.")
-    StartingTime_MainLoopThread = getPreciseSecondsTimeStampString()
-
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
     while(EXIT_PROGRAM_FLAG == 0):
 
         ###################################################
@@ -1045,7 +1142,7 @@ if __name__ == '__main__':
         ################################################### GET's
         if EntryListWithBlinking_OPEN_FLAG == 1:
 
-            EntryListWithBlinking_MostRecentDict = EntryListWithBlinking_ReubenPython2and3ClassObject.GetMostRecentDataDict()
+            EntryListWithBlinking_MostRecentDict = EntryListWithBlinking_Object.GetMostRecentDataDict()
 
             if "DataUpdateNumber" in EntryListWithBlinking_MostRecentDict and EntryListWithBlinking_MostRecentDict["DataUpdateNumber"] != EntryListWithBlinking_MostRecentDict_DataUpdateNumber_last:
                 EntryListWithBlinking_MostRecentDict_DataUpdateNumber = EntryListWithBlinking_MostRecentDict["DataUpdateNumber"]
@@ -1054,9 +1151,9 @@ if __name__ == '__main__':
                 if EntryListWithBlinking_MostRecentDict_DataUpdateNumber > 1:
                     DebugVar_LowPassFilterForDictsOfLists_ExponentialSmoothingFilterLambda = EntryListWithBlinking_MostRecentDict["DebugVar_LowPassFilterForDictsOfLists_ExponentialSmoothingFilterLambda"]
 
-                    if LowPassFilterForDictsOfLists_Keyboard_OPEN_FLAG == 1:
+                    if LowPassFilterForDictsOfLists_OPEN_FLAG == 1:
                         LowPassFilterForDictsOfLists_DictOfVariableFilterSettings["DebugVar"]["ExponentialSmoothingFilterLambda"] = DebugVar_LowPassFilterForDictsOfLists_ExponentialSmoothingFilterLambda
-                        LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.AddOrUpdateDictOfVariableFilterSettingsFromExternalProgram(LowPassFilterForDictsOfLists_DictOfVariableFilterSettings)
+                        LowPassFilterForDictsOfLists_Object.AddOrUpdateDictOfVariableFilterSettingsFromExternalProgram(LowPassFilterForDictsOfLists_DictOfVariableFilterSettings)
 
         ###################################################
 
@@ -1098,24 +1195,24 @@ if __name__ == '__main__':
         ################################################### GET's
         ###################################################
         if CSVdataLogger_OPEN_FLAG == 1:
-            CSVdataLogger_ReubenPython3ClassObject_IsSavingFlag = CSVdataLogger_ReubenPython3ClassObject.IsSaving()
+            CSVdataLogger_IsSavingFlag = CSVdataLogger_Object.IsSaving()
         else:
-            CSVdataLogger_ReubenPython3ClassObject_IsSavingFlag = 0
+            CSVdataLogger_IsSavingFlag = 0
         ###################################################
         ###################################################
 
         #################################################### GET's
         ####################################################
-        if LowPassFilterForDictsOfLists_Keyboard_OPEN_FLAG == 1:
+        if LowPassFilterForDictsOfLists_OPEN_FLAG == 1:
 
-            LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.AddDataDictFromExternalProgram(dict([("DebugVar", SerialJSONstreamer_MostRecentDict_DebugVar)])) #Update data
+            LowPassFilterForDictsOfLists_Object.AddDataDictFromExternalProgram(dict([("DebugVar", SerialJSONstreamer_MostRecentDict_DebugVar)])) #Update data
 
-            LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_MostRecentDict = LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.GetMostRecentDataDict() #Get latest data
-            #print("LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_MostRecentDict: " + str(LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_MostRecentDict))
+            LowPassFilterForDictsOfLists_MostRecentDict = LowPassFilterForDictsOfLists_Object.GetMostRecentDataDict() #Get latest data
+            #print("LowPassFilterForDictsOfLists_MostRecentDict: " + str(LowPassFilterForDictsOfLists_MostRecentDict))
 
-            if "DebugVar" in LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_MostRecentDict:
-                DebugVar_Raw = LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_MostRecentDict["DebugVar"]["Raw_MostRecentValuesList"]
-                DebugVar_Filtered = LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_MostRecentDict["DebugVar"]["Filtered_MostRecentValuesList"]
+            if "DebugVar" in LowPassFilterForDictsOfLists_MostRecentDict:
+                DebugVar_Raw = LowPassFilterForDictsOfLists_MostRecentDict["DebugVar"]["Raw_MostRecentValuesList"]
+                DebugVar_Filtered = LowPassFilterForDictsOfLists_MostRecentDict["DebugVar"]["Filtered_MostRecentValuesList"]
 
         ####################################################
         ####################################################
@@ -1128,28 +1225,28 @@ if __name__ == '__main__':
             ####################################################
             ####################################################
             ####################################################
-            if CSVdataLogger_ReubenPython3ClassObject_HeaderWrittenYetFlag == 0:
+            if CSVdataLogger_HeaderWrittenYetFlag == 0:
                 if "RxMessage_Dict" in SerialJSONstreamer_MostRecentDict:
 
-                    CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList = []
+                    CSVdataLogger_SetupDict_VariableNamesForHeaderList = []
 
                     ####################################################
                     ####################################################
                     for VariableName in SerialJSONstreamer_MostRecentDict["RxMessage_Dict"]:
-                        CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList.append(VariableName)
+                        CSVdataLogger_SetupDict_VariableNamesForHeaderList.append(VariableName)
 
                         ####################################################
                         if VariableName == "DebugVar":
-                            CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList.append("DebugVar_Filtered")
+                            CSVdataLogger_SetupDict_VariableNamesForHeaderList.append("DebugVar_Filtered")
                         ####################################################
 
                     ####################################################
                     ####################################################
 
-                    CSVdataLogger_ReubenPython3ClassObject_setup_dict["VariableNamesForHeaderList"] = CSVdataLogger_ReubenPython3ClassObject_setup_dict_VariableNamesForHeaderList
+                    CSVdataLogger_SetupDict["VariableNamesForHeaderList"] = CSVdataLogger_SetupDict_VariableNamesForHeaderList
 
-                    CSVdataLogger_ReubenPython3ClassObject.UpdateSetupDictParameters(CSVdataLogger_ReubenPython3ClassObject_setup_dict)
-                    CSVdataLogger_ReubenPython3ClassObject_HeaderWrittenYetFlag = 1
+                    CSVdataLogger_Object.UpdateSetupDictParameters(CSVdataLogger_SetupDict)
+                    CSVdataLogger_HeaderWrittenYetFlag = 1
             ####################################################
             ####################################################
             ####################################################
@@ -1178,7 +1275,7 @@ if __name__ == '__main__':
             ####################################################
             ####################################################
 
-            CSVdataLogger_ReubenPython3ClassObject.AddDataToCSVfile_ExternalFunctionCall(ListToWrite)
+            CSVdataLogger_Object.AddDataToCSVfile_ExternalFunctionCall(ListToWrite)
         ####################################################
         ####################################################
         ####################################################
@@ -1212,11 +1309,13 @@ if __name__ == '__main__':
         ####################################################
 
         time.sleep(0.002)
-    #################################################
-    #################################################
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
 
-    ################################################# THIS IS THE EXIT ROUTINE!
-    #################################################
+    ##################################################################################################### THIS IS THE EXIT ROUTINE!
+    #####################################################################################################
+    #####################################################################################################
     print("Exiting main program 'test_program_for_SerialJSONstreamer_ReubenPython3Class.")
 
     #################################################
@@ -1226,22 +1325,22 @@ if __name__ == '__main__':
 
     #################################################
     if MyPrint_OPEN_FLAG == 1:
-        MyPrint_ReubenPython2and3ClassObject.ExitProgram_Callback()
+        MyPrint_Object.ExitProgram_Callback()
     #################################################
 
     #################################################
     if CSVdataLogger_OPEN_FLAG == 1:
-        CSVdataLogger_ReubenPython3ClassObject.ExitProgram_Callback()
+        CSVdataLogger_Object.ExitProgram_Callback()
     #################################################
 
     #################################################
-    if LowPassFilterForDictsOfLists_Keyboard_OPEN_FLAG == 1:
-        LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.ExitProgram_Callback()
+    if LowPassFilterForDictsOfLists_OPEN_FLAG == 1:
+        LowPassFilterForDictsOfLists_Object.ExitProgram_Callback()
     #################################################
 
     #################################################
     if EntryListWithBlinking_OPEN_FLAG == 1:
-        EntryListWithBlinking_ReubenPython2and3ClassObject.ExitProgram_Callback()
+        EntryListWithBlinking_Object.ExitProgram_Callback()
     #################################################
 
     #################################################
@@ -1249,8 +1348,11 @@ if __name__ == '__main__':
         MyPlotterPureTkinterStandAloneProcess_ReubenPython2and3ClassObject.ExitProgram_Callback()
     #################################################
 
-    #################################################
-    #################################################
+    #####################################################################################################
+    #####################################################################################################
+    #####################################################################################################
 
+##########################################################################################################
+##########################################################################################################
 ##########################################################################################################
 ##########################################################################################################

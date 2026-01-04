@@ -5,12 +5,20 @@ Reuben Brewer, Ph.D.
 reuben.brewer@gmail.com
 www.reubotics.com
 
-Software Revision B, 12/09/2025
+Software Revision C, 12/26/2025
 
-Verified working on: Python 3.12 for Windows 11 64-bit and Raspberry Pi Buster (may work on Mac in non-GUI mode, but haven't tested yet).
+Verified working on: Python 3.12/13 for Windows 11 64-bit and Raspberry Pi Bookworm (may work on Mac in non-GUI mode, but haven't tested yet).
 '''
 
 __author__ = 'reuben.brewer'
+
+##########################################################################################################
+##########################################################################################################
+
+##########################################
+import ReubenGithubCodeModulePaths #Replaces the need to have "ReubenGithubCodeModulePaths.pth" within "C:\Anaconda3\Lib\site-packages".
+ReubenGithubCodeModulePaths.Enable()
+##########################################
 
 ##########################################
 from LowPassFilterForDictsOfLists_ReubenPython2and3Class import *
@@ -81,20 +89,19 @@ if platform.system() == "Windows":
     winmm.timeBeginPeriod(1) #Set minimum timer resolution to 1ms so that time.sleep(0.001) behaves properly.
 ##########################################
 
-#########################################################
-
-##########################
+##########################################
 import serial #___IMPORTANT: pip install pyserial (NOT pip install serial).
 from serial.tools import list_ports
-##########################
+##########################################
 
-#########################################################
+##########################################################################################################
+##########################################################################################################
 
 class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
     ##########################################################################################################
     ##########################################################################################################
-    def __init__(self, setup_dict): #Subclass the Tkinter Frame
+    def __init__(self, SetupDict): #Subclass the Tkinter Frame
 
         print("#################### SerialJSONstreamer_ReubenPython3Class __init__ starting. ####################")
 
@@ -176,8 +183,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "GUIparametersDict" in setup_dict:
-            self.GUIparametersDict = setup_dict["GUIparametersDict"]
+        if "GUIparametersDict" in SetupDict:
+            self.GUIparametersDict = SetupDict["GUIparametersDict"]
 
             #########################################################
             #########################################################
@@ -187,16 +194,6 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
                 self.USE_GUI_FLAG = 0
 
             print("SerialJSONstreamer_ReubenPython3Class __init__: USE_GUI_FLAG: " + str(self.USE_GUI_FLAG))
-            #########################################################
-            #########################################################
-
-            #########################################################
-            #########################################################
-            if "root" in self.GUIparametersDict:
-                self.root = self.GUIparametersDict["root"]
-            else:
-                print("SerialJSONstreamer_ReubenPython3Class __init__: ERROR, must pass in 'root'")
-                return
             #########################################################
             #########################################################
 
@@ -331,8 +328,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "DesiredSerialNumber_USBtoSerialConverter" in setup_dict:
-            self.DesiredSerialNumber_USBtoSerialConverter = setup_dict["DesiredSerialNumber_USBtoSerialConverter"]
+        if "DesiredSerialNumber_USBtoSerialConverter" in SetupDict:
+            self.DesiredSerialNumber_USBtoSerialConverter = SetupDict["DesiredSerialNumber_USBtoSerialConverter"]
 
         else:
             print("SerialJSONstreamer_ReubenPython3Class __init__: ERROR, must initialize object with 'DesiredSerialNumber_USBtoSerialConverter' argument.")
@@ -344,8 +341,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "FTDIchipUsedWithinUSBtoSerialConverterFlag" in setup_dict:
-            self.FTDIchipUsedWithinUSBtoSerialConverterFlag = self.PassThrough0and1values_ExitProgramOtherwise("FTDIchipUsedWithinUSBtoSerialConverterFlag", setup_dict["FTDIchipUsedWithinUSBtoSerialConverterFlag"])
+        if "FTDIchipUsedWithinUSBtoSerialConverterFlag" in SetupDict:
+            self.FTDIchipUsedWithinUSBtoSerialConverterFlag = self.PassThrough0and1values_ExitProgramOtherwise("FTDIchipUsedWithinUSBtoSerialConverterFlag", SetupDict["FTDIchipUsedWithinUSBtoSerialConverterFlag"])
         else:
             self.FTDIchipUsedWithinUSBtoSerialConverterFlag = 0
 
@@ -355,8 +352,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "SerialBaudRate" in setup_dict:
-            self.SerialBaudRate = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("SerialBaudRate", setup_dict["SerialBaudRate"], 0, 20000000))
+        if "SerialBaudRate" in SetupDict:
+            self.SerialBaudRate = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("SerialBaudRate", SetupDict["SerialBaudRate"], 0, 20000000))
 
             #NOT checking if self.SerialBaudRate is in an approved list because we want to keep this general for different types of devices with different baud rates.
 
@@ -369,8 +366,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "NameToDisplay_UserSet" in setup_dict:
-            self.NameToDisplay_UserSet = str(setup_dict["NameToDisplay_UserSet"])
+        if "NameToDisplay_UserSet" in SetupDict:
+            self.NameToDisplay_UserSet = str(SetupDict["NameToDisplay_UserSet"])
         else:
             self.NameToDisplay_UserSet = ""
 
@@ -380,8 +377,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "DedicatedRxThread_TimeToSleepEachLoop" in setup_dict:
-            self.DedicatedRxThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("DedicatedRxThread_TimeToSleepEachLoop", setup_dict["DedicatedRxThread_TimeToSleepEachLoop"], 0.001, 100000)
+        if "DedicatedRxThread_TimeToSleepEachLoop" in SetupDict:
+            self.DedicatedRxThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("DedicatedRxThread_TimeToSleepEachLoop", SetupDict["DedicatedRxThread_TimeToSleepEachLoop"], 0.001, 100000)
 
         else:
             self.DedicatedRxThread_TimeToSleepEachLoop = 0.005
@@ -392,8 +389,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "DedicatedTxThread_TimeToSleepEachLoop" in setup_dict:
-            self.DedicatedTxThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("DedicatedTxThread_TimeToSleepEachLoop", setup_dict["DedicatedTxThread_TimeToSleepEachLoop"], 0.001, 100000)
+        if "DedicatedTxThread_TimeToSleepEachLoop" in SetupDict:
+            self.DedicatedTxThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("DedicatedTxThread_TimeToSleepEachLoop", SetupDict["DedicatedTxThread_TimeToSleepEachLoop"], 0.001, 100000)
 
         else:
             self.DedicatedTxThread_TimeToSleepEachLoop = 0.005
@@ -404,8 +401,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "SerialRxBufferSize" in setup_dict:
-            self.SerialRxBufferSize = round(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("SerialRxBufferSize", setup_dict["SerialRxBufferSize"], 0.0, 4096.0)) #Maybe 64 to 4096
+        if "SerialRxBufferSize" in SetupDict:
+            self.SerialRxBufferSize = round(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("SerialRxBufferSize", SetupDict["SerialRxBufferSize"], 0.0, 4096.0)) #Maybe 64 to 4096
             #Whether and how setting the Rx buffer size actually affects the reading behavior is complicated. This call only works in Windows. It seems to work for many drivers (including FTDI) but not all. Also, Windows doesn't allow a 0 or 1 byte buffer for all drivers.
 
         else:
@@ -417,8 +414,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "SerialTxBufferSize" in setup_dict:
-            self.SerialTxBufferSize = round(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("SerialTxBufferSize", setup_dict["SerialTxBufferSize"], 0.0, 4096.0)) #Maybe 64 to 4096
+        if "SerialTxBufferSize" in SetupDict:
+            self.SerialTxBufferSize = round(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("SerialTxBufferSize", SetupDict["SerialTxBufferSize"], 0.0, 4096.0)) #Maybe 64 to 4096
 
         else:
             self.SerialTxBufferSize = 64
@@ -429,8 +426,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #########################################################
-        if "HeartbeatTimeIntervalMilliseconds" in setup_dict:
-            HeartbeatTimeIntervalMilliseconds_TEMP = setup_dict["HeartbeatTimeIntervalMilliseconds"]
+        if "HeartbeatTimeIntervalMilliseconds" in SetupDict:
+            HeartbeatTimeIntervalMilliseconds_TEMP = SetupDict["HeartbeatTimeIntervalMilliseconds"]
             if int(HeartbeatTimeIntervalMilliseconds_TEMP) in [-1, 0]:
                 self.HeartbeatTimeIntervalMilliseconds = HeartbeatTimeIntervalMilliseconds_TEMP
             else:
@@ -445,8 +442,8 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
         
         #########################################################
         #########################################################
-        if "UseCRC16flag" in setup_dict:
-            self.UseCRC16flag = self.PassThrough0and1values_ExitProgramOtherwise("UseCRC16flag", setup_dict["UseCRC16flag"])
+        if "UseCRC16flag" in SetupDict:
+            self.UseCRC16flag = self.PassThrough0and1values_ExitProgramOtherwise("UseCRC16flag", SetupDict["UseCRC16flag"])
         else:
             self.UseCRC16flag = 0
 
@@ -459,18 +456,18 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
         #########################################################
         #new_filtered_value = k * raw_sensor_value + (1 - k) * old_filtered_value
-        self.LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_DictOfVariableFilterSettings = dict([("DataStreamingFrequency_CalculatedFromDedicatedTxThread", dict([("UseMedianFilterFlag", 1), ("UseExponentialSmoothingFilterFlag", 1),("ExponentialSmoothingFilterLambda", self.DataStreamingFrequency_CalculatedFromDedicatedTxThread__ExponentialSmoothingFilterLambda)])),
-                                                                                                             ("DataStreamingFrequency_CalculatedFromDedicatedRxThread", dict([("UseMedianFilterFlag", 1), ("UseExponentialSmoothingFilterFlag", 1),("ExponentialSmoothingFilterLambda", self.DataStreamingFrequency_CalculatedFromDedicatedRxThread__ExponentialSmoothingFilterLambda)]))])
+        self.LowPassFilterForDictsOfLists_DictOfVariableFilterSettings = dict([("DataStreamingFrequency_CalculatedFromDedicatedTxThread", dict([("UseMedianFilterFlag", 0), ("UseExponentialSmoothingFilterFlag", 1),("ExponentialSmoothingFilterLambda", self.DataStreamingFrequency_CalculatedFromDedicatedTxThread__ExponentialSmoothingFilterLambda)])),
+                                                                             ("DataStreamingFrequency_CalculatedFromDedicatedRxThread", dict([("UseMedianFilterFlag", 0), ("UseExponentialSmoothingFilterFlag", 1),("ExponentialSmoothingFilterLambda", self.DataStreamingFrequency_CalculatedFromDedicatedRxThread__ExponentialSmoothingFilterLambda)]))])
 
-        self.LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_setup_dict = dict([("DictOfVariableFilterSettings", self.LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_DictOfVariableFilterSettings)])
+        self.LowPassFilterForDictsOfLists_SetupDict = dict([("DictOfVariableFilterSettings", self.LowPassFilterForDictsOfLists_DictOfVariableFilterSettings)])
 
-        self.LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject = LowPassFilterForDictsOfLists_ReubenPython2and3Class(self.LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject_setup_dict)
-        self.LOWPASSFILTER_OPEN_FLAG = self.LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+        self.LowPassFilterForDictsOfLists_Object = LowPassFilterForDictsOfLists_ReubenPython2and3Class(self.LowPassFilterForDictsOfLists_SetupDict)
+        self.LowPassFilterForDictsOfLists_OPEN_FLAG = self.LowPassFilterForDictsOfLists_Object.OBJECT_CREATED_SUCCESSFULLY_FLAG
         #########################################################
 
         #########################################################
-        if self.LOWPASSFILTER_OPEN_FLAG != 1:
-            print("SerialJSONstreamer_ReubenPython3Class __init__: Failed to open LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.")
+        if self.LowPassFilterForDictsOfLists_OPEN_FLAG != 1:
+            print("SerialJSONstreamer_ReubenPython3Class __init__: Failed to open LowPassFilterForDictsOfLists_Object.")
             return
         #########################################################
 
@@ -529,19 +526,6 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
         #########################################################
         self.DedicatedTxThread_ThreadingObject = threading.Thread(target=self.DedicatedTxThread, args=())
         self.DedicatedTxThread_ThreadingObject.start()
-        #########################################################
-        #########################################################
-
-        #########################################################
-        #########################################################
-        if self.USE_GUI_FLAG == 1:
-            self.StartGUI(self.root)
-        #########################################################
-        #########################################################
-
-        #########################################################
-        #########################################################
-        time.sleep(0.25)
         #########################################################
         #########################################################
 
@@ -924,7 +908,7 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
             if self.DataStreamingDeltaT_CalculatedFromDedicatedTxThread != 0.0:
                 DataStreamingFrequency_CalculatedFromDedicatedTxThread_TEMP = 1.0/self.DataStreamingDeltaT_CalculatedFromDedicatedTxThread
 
-                ResultsDict = self.LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.AddDataDictFromExternalProgram(dict([("DataStreamingFrequency_CalculatedFromDedicatedTxThread", DataStreamingFrequency_CalculatedFromDedicatedTxThread_TEMP)]))
+                ResultsDict = self.LowPassFilterForDictsOfLists_Object.AddDataDictFromExternalProgram(dict([("DataStreamingFrequency_CalculatedFromDedicatedTxThread", DataStreamingFrequency_CalculatedFromDedicatedTxThread_TEMP)]))
                 self.DataStreamingFrequency_CalculatedFromDedicatedTxThread = ResultsDict["DataStreamingFrequency_CalculatedFromDedicatedTxThread"]["Filtered_MostRecentValuesList"][0]
 
             self.LastTime_CalculatedFromDedicatedTxThread = self.CurrentTime_CalculatedFromDedicatedTxThread
@@ -945,7 +929,7 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
             if self.DataStreamingDeltaT_CalculatedFromDedicatedRxThread != 0.0:
                 DataStreamingFrequency_CalculatedFromDedicatedRxThread_TEMP = 1.0/self.DataStreamingDeltaT_CalculatedFromDedicatedRxThread
 
-                ResultsDict = self.LowPassFilterForDictsOfLists_ReubenPython2and3ClassObject.AddDataDictFromExternalProgram(dict([("DataStreamingFrequency_CalculatedFromDedicatedRxThread", DataStreamingFrequency_CalculatedFromDedicatedRxThread_TEMP)]))
+                ResultsDict = self.LowPassFilterForDictsOfLists_Object.AddDataDictFromExternalProgram(dict([("DataStreamingFrequency_CalculatedFromDedicatedRxThread", DataStreamingFrequency_CalculatedFromDedicatedRxThread_TEMP)]))
                 self.DataStreamingFrequency_CalculatedFromDedicatedRxThread = ResultsDict["DataStreamingFrequency_CalculatedFromDedicatedRxThread"]["Filtered_MostRecentValuesList"][0]
 
             self.LastTime_CalculatedFromDedicatedRxThread = self.CurrentTime_CalculatedFromDedicatedRxThread
@@ -1330,22 +1314,14 @@ class SerialJSONstreamer_ReubenPython3Class(Frame): #Subclass the Tkinter Frame
 
     ##########################################################################################################
     ##########################################################################################################
-    def StartGUI(self, GuiParent):
+    def CreateGUIobjects(self, TkinterParent):
 
-        self.GUI_Thread(GuiParent)
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-    def GUI_Thread(self, parent):
-
-        print("Starting the GUI_Thread for SerialJSONstreamer_ReubenPython3Class object.")
+        print("SerialJSONstreamer_ReubenPython3Class, CreateGUIobjects event fired.")
 
         #################################################
         #################################################
-        self.root = parent
-        self.parent = parent
+        self.root = TkinterParent
+        self.parent = TkinterParent
         #################################################
         #################################################
 
